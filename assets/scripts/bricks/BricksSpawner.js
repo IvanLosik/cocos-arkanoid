@@ -15,9 +15,7 @@ export default class BricksSpawner extends cc.Component {
     }
 
     spawn(config) {
-        if (!config || !config.length || !config[0].length) {
-            return;
-        }
+        if (!config || !config.length || !config[0].length) return;
 
         this.bricksHolder.removeAllChildren();
 
@@ -30,11 +28,11 @@ export default class BricksSpawner extends cc.Component {
         let startX = -totalWidth * 0.5;
         let startY = totalHeight * 0.5;
 
+        let bricks = [];
+
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
-                if (config[row][col] === 0) {
-                    continue;
-                }
+                if (config[row][col] === 0) continue;
 
                 let brickNode = cc.instantiate(this.brickPrefab);
 
@@ -45,7 +43,11 @@ export default class BricksSpawner extends cc.Component {
                 let brick = brickNode.getComponent(Brick);
 
                 brick?.init(BricksConfig[config[row][col]]);
+
+                bricks.push(brick);
             }
         }
+
+        return bricks;
     }
 }

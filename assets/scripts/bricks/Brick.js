@@ -1,3 +1,4 @@
+import AnimationHelper from '../AnimationHelper';
 import Ball from '../ball/Ball';
 
 const {ccclass, property} = cc._decorator;
@@ -21,9 +22,7 @@ export default class Brick extends cc.Component {
     }
 
     init(config) {
-        if (!config) {
-            return;
-        }
+        if (!config) return;
 
         this.hp = config.hp;
         this.color = config.color;
@@ -31,19 +30,15 @@ export default class Brick extends cc.Component {
 
         this.render.color = cc.color().fromHEX(this.color);
 
-
-
         if (this.isHeart) {
-            this.brickAnimation.play(this.pulseAnimClip.name);
+            AnimationHelper.playAnim(this.brickAnimation, this.pulseAnimClip.name);
         }
     }
 
     onBeginContact(contact, selfCollider, otherCollider) {
         let ball = otherCollider.node.getComponent(Ball);
 
-        if (!ball) {
-            return;
-        }
+        if (!ball) return;
 
         this.takeDamage(ball.getDamage());
     }
@@ -60,16 +55,19 @@ export default class Brick extends cc.Component {
         this.hitBrick();
     }
 
-    hitBrick() {
-        this.brickAnimation.play(this.hitAnimClip.name);
+    async hitBrick() {
+        await AnimationHelper.playAnim(this.brickAnimation, this.hitAnimClip.name);
+
+        if (this.isHeart) {
+            AnimationHelper.playAnim(this.brickAnimation, this.pulseAnimClip.name);
+        }
     }
 
-    destroyBrick() {
+    async destroyBrick() {
         this.boxCollider.enabled = false;
-        this.brickAnimation.play(this.destroyAnimClip.name);
 
-        this.brickAnimation.on('finished', () => {
-            this.node.active = false;
-        })
+        await AnimationHelper.playAnim(this.brickAnimation, this.destroyAnimClip.name);
+
+        this.node.active = false;
     }
 }

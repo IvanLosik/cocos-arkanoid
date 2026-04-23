@@ -9,6 +9,8 @@ const {ccclass, property} = cc._decorator;
 export default class PaddleMover extends cc.Component {
     onLoad() {
         this.isTouched = false;
+        this.isLocked = true;
+        this.startPos = this.node.position;
     }
 
     onEnable() {
@@ -17,6 +19,11 @@ export default class PaddleMover extends cc.Component {
 
     onDisable() {
         this.toggleSubscribe(false);
+    }
+
+    release() {
+        this.isLocked = false;
+        this.node.position = this.startPos
     }
 
     toggleSubscribe(isOn) {
@@ -28,13 +35,13 @@ export default class PaddleMover extends cc.Component {
     }
 
     onInputDown(eventTouch, inputSource) {
-        if (!this.checkInputSource(inputSource) || this.isTouched) return;
+        if (!this.canMove(inputSource) || this.isTouched) return;
 
         this.isTouched = true;
     }
 
     onInputMove(eventTouch, inputSource) {
-        if (!this.checkInputSource(inputSource) || !this.isTouched) return;
+        if (!this.canMove(inputSource) || !this.isTouched) return;
 
         let worldPos = TouchConverter.convertToWorld(eventTouch);
 
@@ -42,15 +49,13 @@ export default class PaddleMover extends cc.Component {
     }
 
     onInputUp(eventTouch, inputSource) {
-        if (!this.checkInputSource(inputSource) || !this.isTouched) return;
+        if (!this.canMove(inputSource) || !this.isTouched) return;
 
         this.isTouched = false;
     }
 
-    checkInputSource(inputSource) {
-        if (inputSource === InputSources.Paddle) {
-            return true;
-        }
+    canMove(inputSource) {
+        if (inputSource === InputSources.Paddle && !this.isLocked) return true;
 
         return false;
     }
