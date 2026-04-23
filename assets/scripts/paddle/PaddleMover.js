@@ -21,9 +21,16 @@ export default class PaddleMover extends cc.Component {
         this.toggleSubscribe(false);
     }
 
+    setStartPos() {
+        this.node.position = this.startPos
+    }
+
     release() {
         this.isLocked = false;
-        this.node.position = this.startPos
+    }
+
+    stop() {
+        this.isLocked = true;
     }
 
     toggleSubscribe(isOn) {

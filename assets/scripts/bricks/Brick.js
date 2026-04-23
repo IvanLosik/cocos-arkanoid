@@ -17,8 +17,6 @@ export default class Brick extends cc.Component {
         this.hp = 1;
         this.color = '#A7A4A4';
         this.isHeart = false;
-
-        this.node.getComponent(cc.RigidBody).enabledContactListener = true;
     }
 
     init(config) {

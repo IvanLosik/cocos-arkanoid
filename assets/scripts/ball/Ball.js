@@ -13,11 +13,12 @@ export default class Ball extends cc.Component {
         this.startPos = this.node.position;
     }
 
-    release() {
+    setStartPos() {
         this.node.position = this.startPos;
-        this.node.getComponent(cc.RigidBody).linearVelocity = cc.v2(0, this.velocity);
+    }
 
-        console.log(this.node.getComponent(cc.RigidBody).set);
+    release() {
+        this.node.getComponent(cc.RigidBody).linearVelocity = cc.v2(0, this.velocity);
     }
 
     stop() {
