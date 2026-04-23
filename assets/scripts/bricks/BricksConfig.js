@@ -9,6 +9,12 @@ let BricksConfig = {
         color: '#FF0000',
         hp: 2,
         isHeart: true
+    },
+
+    3: {
+        color: '#4d82a0',
+        hp: 3,
+        isHeart: false
     }
 };
 
