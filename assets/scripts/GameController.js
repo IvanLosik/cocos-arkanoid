@@ -58,10 +58,10 @@ export default class GameController extends cc.Component {
 
                 this.ball.setStartPos();
                 this.paddleMover.setStartPos();
+                this.isStarted = true;
 
                 await this.hideNode(1, this.restartButton);
 
-                this.isStarted = true;
 
                 this.ball.release();
                 this.paddleMover.release();

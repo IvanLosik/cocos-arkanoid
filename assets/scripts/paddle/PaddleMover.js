@@ -21,6 +21,14 @@ export default class PaddleMover extends cc.Component {
         this.toggleSubscribe(false);
     }
 
+    toggleSubscribe(isOn) {
+        let type = isOn ? 'on' : 'off';
+
+        cc.systemEvent[type](InputTypes.Down.toString(), this.onInputDown, this);
+        cc.systemEvent[type](InputTypes.Move.toString(), this.onInputMove, this);
+        cc.systemEvent[type](InputTypes.Up.toString(), this.onInputUp, this);
+    }
+
     setStartPos() {
         this.node.position = this.startPos
     }
@@ -33,13 +41,6 @@ export default class PaddleMover extends cc.Component {
         this.isLocked = true;
     }
 
-    toggleSubscribe(isOn) {
-        let type = isOn ? 'on' : 'off';
-
-        cc.systemEvent[type](InputTypes.Down.toString(), this.onInputDown, this);
-        cc.systemEvent[type](InputTypes.Move.toString(), this.onInputMove, this);
-        cc.systemEvent[type](InputTypes.Up.toString(), this.onInputUp, this);
-    }
 
     onInputDown(eventTouch, inputSource) {
         if (!this.canMove(inputSource) || this.isTouched) return;
