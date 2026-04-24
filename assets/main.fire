@@ -2064,7 +2064,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "BricksSpawner",
+    "_name": "BricksController",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -2125,7 +2125,7 @@
     "_id": "b4e0UR3g5GzYsMc1Ke1Hpf"
   },
   {
-    "__type__": "76609wXRaNK9KdLoAugOe8P",
+    "__type__": "78d9d22+WdL4I4NlLq+Fcde",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -2140,10 +2140,10 @@
     },
     "offset": {
       "__type__": "cc.Vec2",
-      "x": 55,
-      "y": 55
+      "x": 60,
+      "y": 60
     },
-    "_id": "42kNOUXrJKPLDm7fQZlMV9"
+    "_id": "d2iv1LTohC+KsScpQKtc4p"
   },
   {
     "__type__": "cc.Node",
@@ -2215,7 +2215,7 @@
       "__id__": 51
     },
     "_enabled": true,
-    "bricksSpawner": {
+    "bricksController": {
       "__id__": 50
     },
     "ball": {
@@ -2517,7 +2517,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "New Label",
+    "_name": "Label",
     "_objFlags": 0,
     "_parent": {
       "__id__": 53

@@ -1,5 +1,6 @@
 import AnimationHelper from '../AnimationHelper';
 import Ball from '../ball/Ball';
+import Events from '../Events';
 
 const {ccclass, property} = cc._decorator;
 
@@ -12,6 +13,7 @@ export default class Brick extends cc.Component {
     @property({visible: true, type: cc.AnimationClip}) destroyAnimClip = null;
     @property({visible: true, type: cc.AnimationClip}) hitAnimClip = null;
     @property({visible: true, type: cc.AnimationClip}) pulseAnimClip = null;
+    @property({visible: true, type: cc.AnimationClip}) showAnimClip = null;
 
     onLoad() {
         this.hp = 1;
@@ -19,7 +21,7 @@ export default class Brick extends cc.Component {
         this.isHeart = false;
     }
 
-    init(config) {
+    async init(config) {
         if (!config) return;
 
         this.hp = config.hp;
@@ -27,6 +29,8 @@ export default class Brick extends cc.Component {
         this.isHeart = config.isHeart;
 
         this.render.color = cc.color().fromHEX(this.color);
+
+        await AnimationHelper.playAnim(this.brickAnimation, this.showAnimClip.name);
 
         if (this.isHeart) {
             AnimationHelper.playAnim(this.brickAnimation, this.pulseAnimClip.name);
@@ -67,5 +71,9 @@ export default class Brick extends cc.Component {
         await AnimationHelper.playAnim(this.brickAnimation, this.destroyAnimClip.name);
 
         this.node.active = false;
+
+        if (this.isHeart) {
+            cc.systemEvent.emit(Events.HeartDestroyed);
+        }
     }
 }

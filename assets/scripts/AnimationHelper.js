@@ -11,4 +11,10 @@ export default class AnimationHelper {
             })
         })
     }
+
+    static async waitFor(component, duration) {
+        return new Promise((resolve, reject) => {
+            component.scheduleOnce(() => resolve(), duration);
+        })
+    }
 }
