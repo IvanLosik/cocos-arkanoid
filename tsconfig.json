@@ -13,7 +13,7 @@
     "library",
     "local",
     "temp",
-    "build",
+    "docs",
     "settings"
   ]
 }
