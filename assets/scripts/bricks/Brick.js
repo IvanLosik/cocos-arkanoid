@@ -14,6 +14,7 @@ export default class Brick extends cc.Component {
     @property({visible: true, type: cc.AnimationClip}) hitAnimClip = null;
     @property({visible: true, type: cc.AnimationClip}) pulseAnimClip = null;
     @property({visible: true, type: cc.AnimationClip}) showAnimClip = null;
+    @property({visible: true, type: cc.AudioSource}) audioSource = null;
 
     onLoad() {
         this.hp = 1;
@@ -47,6 +48,8 @@ export default class Brick extends cc.Component {
 
     takeDamage(value) {
         this.hp -= value;
+
+        this.audioSource.play();
 
         if (this.hp <= 0) {
             this.destroyBrick();

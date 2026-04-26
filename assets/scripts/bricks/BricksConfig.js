@@ -7,13 +7,13 @@ let BricksConfig = {
 
     2: {
         color: '#FF0000',
-        hp: 2,
+        hp: 1,
         isHeart: true
     },
 
     3: {
         color: '#4d82a0',
-        hp: 3,
+        hp: 2,
         isHeart: false
     }
 };
