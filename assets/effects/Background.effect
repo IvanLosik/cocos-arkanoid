@@ -104,7 +104,7 @@ CCProgram fs %{
     color *= step(0.2, fpos.y);
 
     float mask = 1.0 - color.r;
-    vec4 o = mix(vec4(.1), vec4(.2), mask);
+    vec4 o = mix(vec4(.3), vec4(.4), mask);
 
     // o = vec4(1.0 - color, 1.0);
 
