@@ -1,5 +1,4 @@
 import InputSources from '../input/InputSources';
-import TouchConverter from '../TouchConverter';
 
 let InputTypes = require('../input/InputTypes');
 
@@ -7,10 +6,19 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass('PaddleMover')
 export default class PaddleMover extends cc.Component {
+    @property(cc.Node) leftBorder = null;
+    @property(cc.Node) rightBorder = null;
+
     onLoad() {
         this.isTouched = false;
         this.isLocked = true;
         this.startPos = this.node.position;
+        this.lastTouchWorldPos = null;
+
+        this.minX = 0;
+        this.maxX = 0;
+
+        this.calculateBorders();
     }
 
     onEnable() {
@@ -29,8 +37,35 @@ export default class PaddleMover extends cc.Component {
         cc.systemEvent[type](InputTypes.Up.toString(), this.onInputUp, this);
     }
 
+    onInputDown(eventTouch, inputSource) {
+        if (!this.canMove(inputSource) || this.isTouched) return;
+
+        this.isTouched = true;
+        this.lastTouchWorldPos = eventTouch.getLocation();
+    }
+
+    onInputMove(eventTouch, inputSource) {
+        if (!this.canMove(inputSource) || !this.isTouched) return;
+
+        let currentTouchWorldPos = eventTouch.getLocation();
+        let deltaX = currentTouchWorldPos.x - this.lastTouchWorldPos.x;
+        let targetX = this.node.x + deltaX * 2.5;
+
+        this.node.x = this.clampByBorders(targetX);
+
+        this.lastTouchWorldPos = currentTouchWorldPos;
+    }
+
+    onInputUp(eventTouch, inputSource) {
+        if (!this.canMove(inputSource) || !this.isTouched) return;
+
+        this.isTouched = false;
+        this.lastTouchWorldPos = null;
+    }
+
     setStartPos() {
-        this.node.position = this.startPos
+        this.node.position = this.startPos;
+        this.node.x = this.clampByBorders(this.node.x);
     }
 
     release() {
@@ -39,32 +74,36 @@ export default class PaddleMover extends cc.Component {
 
     stop() {
         this.isLocked = true;
-    }
-
-
-    onInputDown(eventTouch, inputSource) {
-        if (!this.canMove(inputSource) || this.isTouched) return;
-
-        this.isTouched = true;
-    }
-
-    onInputMove(eventTouch, inputSource) {
-        if (!this.canMove(inputSource) || !this.isTouched) return;
-
-        let worldPos = TouchConverter.convertToWorld(eventTouch);
-
-        this.node.setWorldPosition(cc.v2(worldPos.x, this.node.y));
-    }
-
-    onInputUp(eventTouch, inputSource) {
-        if (!this.canMove(inputSource) || !this.isTouched) return;
-
         this.isTouched = false;
+        this.lastTouchWorldPos = null;
     }
 
     canMove(inputSource) {
-        if (inputSource === InputSources.Paddle && !this.isLocked) return true;
+        if (inputSource === InputSources.CommonCatcher && !this.isLocked) return true;
 
         return false;
     }
+
+    calculateBorders() {
+        let parent = this.node.parent;
+
+        let leftWorldPos = this.leftBorder.convertToWorldSpaceAR(cc.v2(0, 0));
+        let rightWorldPos = this.rightBorder.convertToWorldSpaceAR(cc.v2(0, 0));
+
+        let leftLocalPos = parent.convertToNodeSpaceAR(leftWorldPos);
+        let rightLocalPos = parent.convertToNodeSpaceAR(rightWorldPos);
+
+        let minX = Math.min(leftLocalPos.x, rightLocalPos.x);
+        let maxX = Math.max(leftLocalPos.x, rightLocalPos.x);
+
+        let halfWidth = this.node.width * this.node.scaleX * 0.5;
+
+        this.minX = minX + halfWidth;
+        this.maxX = maxX - halfWidth;
+    }
+
+    clampByBorders(targetX) {
+        return cc.misc.clampf(targetX, this.minX, this.maxX);
+    }
+
 }

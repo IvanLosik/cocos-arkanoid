@@ -39,44 +39,43 @@ export default class GameController extends cc.Component {
         cc.systemEvent[type](Events.AllHeartsDestroyed.toString(), this.onAllHeartsDestroyed, this);
     }
 
-
     async onInputDown(eventTouch, inputSource) {
+        if (inputSource !== InputSources.RestartButton) return;
+        if (this.isStarted) return;
 
-        switch (inputSource) {
-            case InputSources.RestartButton: {
-                if (this.isStarted) return;
+        await this.startGame();
+    }
 
-                if (!this.isCurrentLevelSpawned) {
-                    this.isCurrentLevelSpawned = true;
-                    console.log(this.currentLevel);
-                    if (Levels[this.currentLevel]) {
-                        this.bricksController.spawn(Levels[this.currentLevel]);
-                    } else {
-                        this.bricksController.spawn(RandomLevel.generate());
-                    }
-                }
+    async startGame() {
+        this.spawnLevelIfNeeded();
 
-                this.ball.setStartPos();
-                this.paddleMover.setStartPos();
-                this.isStarted = true;
+        this.ball.setStartPos();
+        this.paddleMover.setStartPos();
 
-                await this.hideNode(1, this.restartButton);
+        this.isStarted = true;
 
+        await this.hideNode(1, this.restartButton);
 
-                this.ball.release();
-                this.paddleMover.release();
-            }
-        }
+        this.ball.release();
+        this.paddleMover.release();
+    }
+
+    spawnLevelIfNeeded() {
+        if (this.isCurrentLevelSpawned) return;
+
+        this.isCurrentLevelSpawned = true;
+
+        let levelConfig = Levels[this.currentLevel] ?? RandomLevel.generate();
+
+        this.bricksController.spawn(levelConfig);
     }
 
     onAllHeartsDestroyed() {
-        this.ball.stop();
-        this.paddleMover.stop();
+        this.stopGameObjects();
     }
 
     async onFail() {
-        this.ball.stop();
-        this.paddleMover.stop();
+        this.stopGameObjects();
 
         await this.showNode(1, this.restartButton);
 
@@ -84,6 +83,8 @@ export default class GameController extends cc.Component {
     }
 
     async onWin() {
+        this.stopGameObjects();
+
         await this.showNode(1, this.restartButton);
 
         this.currentLevel++;
@@ -91,24 +92,33 @@ export default class GameController extends cc.Component {
         this.isStarted = false;
     }
 
-    async hideNode(duration, node) {
+    stopGameObjects() {
+        this.ball.stop();
+        this.paddleMover.stop();
+    }
+
+    hideNode(duration, node) {
         return new Promise((resolve) => {
             cc.tween(node)
                 .to(duration, {opacity: 0})
-                .call(() => node.active = false)
-                .call(() => resolve())
+                .call(() => {
+                    node.active = false;
+                    resolve();
+                })
                 .start();
-        })
+        });
     }
 
-    async showNode(duration, node) {
+    showNode(duration, node) {
         node.active = true;
 
         return new Promise((resolve) => {
             cc.tween(node)
                 .to(duration, {opacity: 255})
-                .call(() => resolve())
+                .call(() => {
+                    resolve();
+                })
                 .start();
-        })
+        });
     }
 }
